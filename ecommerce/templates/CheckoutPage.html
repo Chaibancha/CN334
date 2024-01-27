@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Checkout: {{ checkout_id }}</title>
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+   <script>
+      function goToSelectedPage() {
+         var selectedPage = document.getElementById("pageSelection").value;
+         if (selectedPage) {
+            window.location.href = selectedPage;
+         }
+      }
+   </script>
+
+</head>
+<body>
+   <div class="container">       
+      <h1>Checkout: {{ checkout_id }}</h1>
+
+      <form>
+         <h2>Billing Information</h2>
+         <div class="mb-3">
+            <label for="billingName" class="form-label">Name</label>
+            <input type="text" class="form-control" id="billingName" required>
+         </div>
+         <div class="mb-3">
+            <label for="billingAddress" class="form-label">Address</label>
+            <textarea class="form-control" id="billingAddress" rows="3" required></textarea>
+         </div>
+
+         <h2>Shipping Information</h2>
+         <div class="mb-3">
+            <label for="shippingName" class="form-label">Name</label>
+            <input type="text" class="form-control" id="shippingName" required>
+         </div>
+         <div class="mb-3">
+            <label for="shippingAddress" class="form-label">Address</label>
+            <textarea class="form-control" id="shippingAddress" rows="3" required></textarea>
+         </div>
+
+         <h2>Order Summary</h2>
+         <table class="table table-striped table-hover">           
+            <tr>
+               <th>Item</th>
+               <th>Quantity</th>
+               <th>Price</th>
+            </tr>
+            <tr>
+               <td>Chaibancha Rangklang</td>
+               <td>2</td>
+               <td>$20.00</td>
+            </tr>
+            <tr>
+               <td>Product 2</td>
+               <td>1</td>
+               <td>$15.00</td>
+            </tr>
+         </table>
+
+         <!-- Total Price -->
+         <h3>Total: $35.00</h3>
+
+         <!-- Place Order Button -->
+         <button type="submit" class="btn btn-primary">Place Order</button>
+      </form>
+   </div>
+   <div class="mb-3">
+      <label for="pageSelection" class="form-label">Select a page:</label>
+      <select class="form-select" id="pageSelection" required>
+         <option value="" disabled selected>Select a page</option>
+         <option value="http://127.0.0.1:8000/ecommerce/HomePage/6410742230">Home Page</option>
+         <option value="http://127.0.0.1:8000/ecommerce/CategoryPage/6410742230">Category Page</option>
+         <option value="http://127.0.0.1:8000/ecommerce/ProductPage/6410742230">Product Page</option>
+         <option value="http://127.0.0.1:8000/ecommerce/CheckoutPage/6410742230">Checkout Page</option>
+         <option value="http://127.0.0.1:8000/ecommerce/ContactPage/6410742230">Contact Page</option>
+      </select>
+   </div>
+   <button type="button" class="btn btn-primary" onclick="goToSelectedPage()">Go</button>
+
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-rbs/JEjxhT7ctfeO5ws0cUom/sfupgckrjLMLq4DKNzsm/z2zmUHfRS4E9LU9M5fa" crossorigin="anonymous"></script>
+</body>
+</html>

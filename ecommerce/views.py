@@ -1,5 +1,9 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import requests
+
+
 # Create your views here.
 def ecommerce_index_view(request):
     '''This function render index page of ecommerce views'''
@@ -12,44 +16,86 @@ def home_view(request, item_id):
         "item_id": item_id   
         }
        
-    return render(request, 'HomePage.html',context= context_data)
+    return render(request, 'index.html',context= context_data)
 
-def category_view(request, item_id):
+@csrf_exempt
+def basic_request(request):
+    if request.method == "GET":
+        return JsonResponse({"status":"GET Pass"}, safe=False)
+    if request.method == "POST":
+        return JsonResponse({"status":"POST Pass"}, safe=False)
 
-    context_data = {
-        "category_id": item_id   
+@csrf_exempt
+def tokenize(request):
+    if request.method == "POST":
+        try:
+            sentence = request.POST['text']
+        except:
+            return JsonResponse({"error":"Input not found"}, safe=False, status=500)
+        url = "https://api.aiforthai.in.th/tlexplus"
+        data = {'text':sentence}
+        headers = {
+        'Apikey': "RpbQ13NhJzyB8KuaH0S0lOYb96U6uDC0"
         }
-       
-    return render(request, 'CategoryPage.html',context= context_data)
+        response = requests.post(url, data=data, headers=headers)
+        reponse_json = response.json()
+        return JsonResponse({"student":"student_id", "tokenize":reponse_json}, safe=False)
+    return JsonResponse({"error":"Method not allowed!"}, safe=False, status=403)
 
-def product_view(request, item_id):
-
-    context_data = {
-        "product_id1": item_id,
-        "product_name1": "Chaibancha Raengklang",
-        "product_description1": "translation to 'Chaibancha Raengklang'",
-        "product_price1": "9,999.99",
-
-        "product_id2": "XXX",
-        "product_name2": "XXXX XXXX",
-        "product_description2": "translation to 'X'",
-        "product_price2": "X,XXX",
+@csrf_exempt
+def sentiment(request):
+    if request.method == "POST":
+        try:
+            sentence = request.POST['text']
+        except:
+            return JsonResponse({"error":"Input not found"}, safe=False, status=500)
+        url = "https://api.aiforthai.in.th/ssense"
+        data = {'text':sentence}
+        headers = {
+        'Apikey': "RpbQ13NhJzyB8KuaH0S0lOYb96U6uDC0"
         }
-       
-    return render(request, 'ProductPage.html',context= context_data)
+        # try:
+        #     response = requests.post(url, data=data, headers=headers)
+        #     response_json = response.json()
+        #     sentiment_data = response_json.get('sentiment', {})
+        #     return JsonResponse({"sentiment": sentiment_data}, status=response.status_code)
+        # except Exception as e:
+        #     return JsonResponse({"error": str(e)}, status=500)
+        try:
+            response = requests.post(url, data=data, headers=headers)
+            response_json = response.json()
+            return JsonResponse({"student":"6410742230","sentiment": response_json}, status=response.status_code)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    return JsonResponse({"error":"Method not allowed!"}, safe=False, status=403)
 
-def checkout_view(request, item_id):
-
-    context_data = {
-        "checkout_id": item_id   
+import IPython
+@csrf_exempt
+def text2speech(request):
+    if request.method == "POST":
+        try:
+            sentence = request.POST['text']
+        except:
+            return JsonResponse({"error":"Input not found"}, safe=False, status=500)
+        url = "https://api.aiforthai.in.th/vaja9/synth_audiovisual"
+        data = {'input_text':sentence,'speaker': 1, 'phrase_break':0, 'audiovisual':0}
+        headers = {
+        'Apikey': "RpbQ13NhJzyB8KuaH0S0lOYb96U6uDC0",
+        'Content-Type' : 'application/json'
         }
-       
-    return render(request, 'CheckoutPage.html',context= context_data)
-
-def contact_view(request, item_id):
-
-    context_data = {
-        "contact_id": item_id   
-        }
-       
-    return render(request, 'ContactPage.html',context= context_data)
+        data = {'input_text':sentence,'speaker': -1, 'phrase_break':0, 'audiovisual':0}
+        response = requests.post(url, json=data, headers=headers)
+        print(response.json())
+        
+        # ดาวน์โหลดไฟล์เสียง
+        resp = requests.get(response.json()['wav_url'],headers=headers)
+        if resp.status_code == 200:
+          with open('test.wav', 'wb') as a:
+            a.write(resp.content)
+            print('Downloaded: ')
+            IPython.display.display(IPython.display.Audio('test.wav'))
+        else:
+          print(resp.reason)
+        return JsonResponse({"student":"6410742230","Output": response.json()['wav_url']}, status=response.status_code)
+        
+    return JsonResponse({"error":"Method not allowed!"}, safe=False, status=403)

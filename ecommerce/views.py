@@ -10,7 +10,7 @@ def ecommerce_index_view(request):
     
     return HttpResponse('Welcome to 6410742230 Chaibancha Raengklang views!')
 
-def item_view(request, item_id):
+def home_view(request, item_id):
 
     context_data = {
         "item_id": item_id   
